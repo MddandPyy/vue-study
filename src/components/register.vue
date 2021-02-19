@@ -4,9 +4,8 @@
     <div style="display: flex;justify-content: center;margin-top: 150px">
       <el-card style="width: 400px">
         <div slot="header" class="clearfix">
-          <span>登录</span>
+          <span>注册</span>
         </div>
-
 
         <el-form ref="form" :model="user" label-width="80px">
           <el-form-item label="用户名">
@@ -15,15 +14,20 @@
           <el-form-item label="密码">
             <el-input v-model="user.password" placeholder="请输入密码" show-password></el-input>
           </el-form-item>
+          <el-form-item label="确认密码">
+            <el-input v-model="user.confirmpassword" placeholder="请再次输入密码" show-password></el-input>
+          </el-form-item>
+          <el-form-item label="年龄">
+            <el-input v-model="user.age" placeholder="请输入年龄" ></el-input>
+          </el-form-item>
            <el-form-item >
-            <el-button  type="primary" @click="doLogin">登录</el-button>
+            <el-button  type="primary" @click="register">注册</el-button>
             <el-button>取消</el-button>
           </el-form-item>
-          没有账号，去<el-link type="primary" @click="toRegister" >
-          注册
+          已有账号，去<el-link type="primary" @click="gologin" >
+          登录
           </el-link>
         </el-form>
-
       </el-card>
     </div>
   </div>
@@ -32,7 +36,6 @@
 
 
   export default {
-    name: 'login',
     //单页面中不支持前面的data:{}方式
     data() {
       //相当于以前的function data(){},这是es5之前的写法，新版本可以省略掉function
@@ -44,30 +47,42 @@
         //可是一般来说可能希望在不同的组件中引用的时候，使用不同的值，所以这里要用return
         //这样在A组件和B组件分别引用这个变量的时候是不会互相影响的
         user:{
-          username:'zhangsan',
-          password:'123',
+          username:'',
+          password:'',
+          age:0,
+          confirmpassword:''
           //为了登录方便，可以直接在这里写好用户名和密码的值
         }
       }
     },
     methods:{
-      doLogin(){//一点击登录按钮，这个方法就会执行
-        this.$axios({
-          url: '/api/login',
+      register(){//一点击登录按钮，这个方法就会执行
+
+        if(this.user.password == this.user.confirmpassword){
+          this.$axios({
+          url: '/api/register',
           method: 'post',
-          data: {'name':this.user.username,'password':this.user.password}
+          data: {'name':this.user.username,'password':this.user.password,'age':this.user.age}
           }).then(res => {
             console.log(res);
-            if(res.data.code==200){
-              this.$router.push('/hello');
-              localStorage.setItem("usertoken", res.data.data);
-              localStorage.setItem("username", this.user.username);
+            if(res.data.flag){
+              this.$router.push('/login');
+               this.$message({
+                    message: '恭喜你，注册成功',
+                    type: 'success'
+                });
+            }else{
+                this.$message.error(res.data.msg);
             }
               
           });
+        }else{
+          this.$message.error("两次输入密码不一致。");
+        }
+        
       },
-      toRegister(){
-        this.$router.push('/register');
+      gologin(){
+        this.$router.push('/login');     
       }
     }
   }

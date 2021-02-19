@@ -1,10 +1,13 @@
 import axios from 'axios'
+import router from './index'
 
 //请求拦截
 axios.interceptors.request.use(function (config) {
-    console.log(config)
-    if(localStorage.getItem('usertoken')){
-        config.headers.Authorization = 'Bearer ' + localStorage.getItem('usertoken')
+    console.log("请求"+JSON.stringify(config))
+    if(config.url != "/api/login"){
+        if(localStorage.getItem('usertoken')){
+            config.headers.Authorization = 'Bearer ' + localStorage.getItem('usertoken')
+        }
     }
     return config
 }, function (error) {
@@ -12,13 +15,16 @@ axios.interceptors.request.use(function (config) {
 });
 //响应拦截
 axios.interceptors.response.use(function (response) {
+    console.log("response----"+JSON.stringify(response));
+    if(response.data.flag == false){
+        if(response.data.code == 400){
+            localStorage.removeItem('usertoken');
+            router.push("/nologin");
+        }
+    }
     return response
 }, function (error) {
     console.log("error"+error);
-    if(error.response.data.code == 401 || error.response.data.code == 402){
-        this.$router.push('/login');
-        localStorage.removeItem('usertoken');
-    }
     return Promise.reject(error)
 });
 export default axios

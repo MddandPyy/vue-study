@@ -4,7 +4,8 @@ import HelloWorld from '@/components/HelloWorld'
 import login from '@/components/login'
 import websocket from '@/components/websocket'
 import user from '@/components/user'
-
+import register from '@/components/register'
+import nologin from '@/components/nologin'
 
 Vue.use(Router)
 
@@ -20,6 +21,9 @@ export default new Router({
       path: '/hello',
       //name: 'HelloWorld',
       component: HelloWorld,
+      meta: {
+        requireAuth: true, // 判断是否需要登录
+      },
       children:[
         {
           path: '/websocket',
@@ -29,6 +33,9 @@ export default new Router({
         {
           path: '/user',
           //name: 'login',
+          meta: {
+            requireAuth: true, // 判断是否需要登录
+          },
           component: user
         }
       ]
@@ -37,6 +44,16 @@ export default new Router({
       path: '/login',
       //name: 'login',
       component: login
+    },
+    {
+      path: '/register',
+      //name: 'login',
+      component: register
+    },
+    {
+      path: '/nologin',
+      //name: 'login',
+      component: nologin
     }
   ]
 })
