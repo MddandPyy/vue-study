@@ -62,6 +62,11 @@
         </el-dropdown-menu>
       </el-dropdown>
       <span>{{ username }}</span>
+      <el-link
+           type="primary" :underline="false"
+          @click="quit" >
+          退出登录
+          </el-link>
     </el-header>
     
     <el-main>
@@ -83,6 +88,10 @@ export default {
   methods:{
       goTo(path){
         this.$router.push(path)
+      },
+      quit(){
+        localStorage.removeItem('usertoken');
+        this.goTo('/login');
       }
   },
   created(){

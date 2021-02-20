@@ -44,8 +44,8 @@
         //可是一般来说可能希望在不同的组件中引用的时候，使用不同的值，所以这里要用return
         //这样在A组件和B组件分别引用这个变量的时候是不会互相影响的
         user:{
-          username:'zhangsan',
-          password:'123',
+          username:'',
+          password:'',
           //为了登录方便，可以直接在这里写好用户名和密码的值
         }
       }
@@ -58,10 +58,12 @@
           data: {'name':this.user.username,'password':this.user.password}
           }).then(res => {
             console.log(res);
-            if(res.data.code==200){
+            if(res.data.flag){
               this.$router.push('/hello');
               localStorage.setItem("usertoken", res.data.data);
               localStorage.setItem("username", this.user.username);
+            }else{
+                this.$message.error(res.data.msg);
             }
               
           });
